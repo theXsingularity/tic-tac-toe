@@ -27,6 +27,10 @@ const gameInfo = {
         gameInfo.players.push(player2);
     },
     mark: function(event){
+        if (event.target.innerHTML !== ''){
+             alert('choose a blank space'); 
+             return;
+        }
         if(gameInfo.turn === "player1") event.target.innerHTML = 'X';
         if(gameInfo.turn === "player2") event.target.innerHTML = 'O';
         gameInfo.gameStart();
@@ -58,11 +62,9 @@ const gameBoard = (() => {
         grid.appendChild(square.cloneNode(true)); 
     };
     for (let i = 0; i <squares.length; i++) {  //loops through node-list
-        squares[i].addEventListener('click', gameInfo.mark); //adds turnRed function (see below)
-        
+        squares[i].addEventListener('click', gameInfo.mark); 
         gameboard.push(squares[i])
     };
-    return {gameboard}
 })();
 
 //factory used to create players earlier
