@@ -49,9 +49,7 @@ const gameInfo = {
 
 //automatically creates board, allows access to the array of all the divs on the board
 const gameBoard = (() => {
-    const squares = document.getElementsByClassName('square')
     const gameboard = [];
-    console.log(squares)
     let square = document.createElement('div');
     square.classList.add('square');
     square.style.height = "50px";
@@ -62,10 +60,12 @@ const gameBoard = (() => {
     for(i=0; i<9; i++) {
         grid.appendChild(square.cloneNode(true)); 
     };
+    const squares = document.getElementsByClassName('square')
     for (let i = 0; i <squares.length; i++) {  //loops through node-list
         squares[i].addEventListener('click', gameInfo.mark); 
         gameboard.push(squares[i])
     };
+    return {gameboard}
 })();
 
 //factory used to create players earlier
