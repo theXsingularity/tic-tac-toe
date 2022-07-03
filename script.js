@@ -27,6 +27,7 @@ const gameInfo = {
         gameInfo.players.push(player2);
     },
     mark: function(event){
+        if(gameInfo.players.length < 1) return;
         if (event.target.innerHTML !== ''){
              alert('choose a blank space'); 
              return;
