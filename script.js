@@ -1,12 +1,20 @@
 const game = function() {
+    if(gameInfo.players.length >= 1) return;
     gameInfo.getPlayers();
     gameInfo.gameStart();
+    btnContainer.removeChild(startGameBtn);
 }
+
+const btnContainer = document.getElementById('container');
+let startGameBtn = document.createElement('button');
+startGameBtn.innerText = "Start";
+btnContainer.appendChild(startGameBtn);
+
 
 //variables for HTML elements
 playersTurn = document.getElementById('playersTurn')
 playerBtn = document.getElementById('start');
-playerBtn.addEventListener('click', game)
+startGameBtn.addEventListener('click', game)
 
 /* ----------contents of game----------
 
@@ -34,9 +42,16 @@ const gameInfo = {
         }
         if(gameInfo.turn === "player1") event.target.innerHTML = 'X';
         if(gameInfo.turn === "player2") event.target.innerHTML = 'O';
-        gameInfo.gameStart();
+        setTimeout(function(){
+            gameInfo.checkWin();
+        }, 1);
+        setTimeout(function(){
+            gameInfo.gameStart();
+        }, 1);
+        
     }, 
     gameStart: function() {
+        
         if(gameInfo.turn === '' || gameInfo.turn === 'player2'){
             playersTurn.innerHTML = 'player 1\'s turn'
             gameInfo.turn = "player1"; 
@@ -44,10 +59,51 @@ const gameInfo = {
             playersTurn.innerHTML = 'player 2\'s turn'
            gameInfo.turn = "player2";
         }
+    },
+    checkWin: function() {
+        if([gameBoard.gameboard[0].innerHTML,gameBoard.gameboard[1].innerHTML,gameBoard.gameboard[2].innerHTML].join('') === 'XXX'
+        || [gameBoard.gameboard[0].innerHTML,gameBoard.gameboard[3].innerHTML,gameBoard.gameboard[6].innerHTML].join('') === 'XXX'
+        || [gameBoard.gameboard[0].innerHTML,gameBoard.gameboard[4].innerHTML,gameBoard.gameboard[8].innerHTML].join('') === 'XXX'
+        || [gameBoard.gameboard[1].innerHTML,gameBoard.gameboard[4].innerHTML,gameBoard.gameboard[7].innerHTML].join('') === 'XXX'
+        || [gameBoard.gameboard[2].innerHTML,gameBoard.gameboard[5].innerHTML,gameBoard.gameboard[8].innerHTML].join('') === 'XXX'
+        || [gameBoard.gameboard[2].innerHTML,gameBoard.gameboard[4].innerHTML,gameBoard.gameboard[6].innerHTML].join('') === 'XXX'
+        || [gameBoard.gameboard[3].innerHTML,gameBoard.gameboard[4].innerHTML,gameBoard.gameboard[5].innerHTML].join('') === 'XXX'
+        || [gameBoard.gameboard[6].innerHTML,gameBoard.gameboard[7].innerHTML,gameBoard.gameboard[8].innerHTML].join('') === 'XXX'
+        || [gameBoard.gameboard[0].innerHTML,gameBoard.gameboard[1].innerHTML,gameBoard.gameboard[2].innerHTML].join('') === 'OOO'
+        || [gameBoard.gameboard[0].innerHTML,gameBoard.gameboard[3].innerHTML,gameBoard.gameboard[6].innerHTML].join('') === 'OOO'
+        || [gameBoard.gameboard[0].innerHTML,gameBoard.gameboard[4].innerHTML,gameBoard.gameboard[8].innerHTML].join('') === 'OOO'
+        || [gameBoard.gameboard[1].innerHTML,gameBoard.gameboard[4].innerHTML,gameBoard.gameboard[7].innerHTML].join('') === 'OOO'
+        || [gameBoard.gameboard[2].innerHTML,gameBoard.gameboard[5].innerHTML,gameBoard.gameboard[8].innerHTML].join('') === 'OOO'
+        || [gameBoard.gameboard[2].innerHTML,gameBoard.gameboard[4].innerHTML,gameBoard.gameboard[6].innerHTML].join('') === 'OOO'
+        || [gameBoard.gameboard[3].innerHTML,gameBoard.gameboard[4].innerHTML,gameBoard.gameboard[5].innerHTML].join('') === 'OOO'
+        || [gameBoard.gameboard[6].innerHTML,gameBoard.gameboard[7].innerHTML,gameBoard.gameboard[8].innerHTML].join('') === 'OOO'
+        ) {
+            alert(`${gameInfo.turn} you win!`)
+            setTimeout(function(){
+                gameInfo.reset();
+            }, 1);
+            
+            
+        }
+    },
+    reset: function() {
+        gameBoard.gameboard.forEach(function(square) {
+            square.innerHTML = ''
+        });
+        turn = ''
+        gameInfo.players = []
+        playersTurn.innerHTML = ''
+        btnContainer.appendChild(startGameBtn);
+
     }
 }
-
-//automatically creates board, allows access to the array of all the divs on the board
+/* factory used to create players earlier */
+const playerFactory = (name) => {
+    moves = 0
+    const sayHello = () => console.log(`hello ${name}`)
+    return {name, moves, sayHello};
+};
+/* automatically creates board, allows access to the array of all the divs on the board */
 const gameBoard = (() => {
     const gameboard = [];
     let square = document.createElement('div');
@@ -68,9 +124,5 @@ const gameBoard = (() => {
     return {gameboard}
 })();
 
-//factory used to create players earlier
-const playerFactory = (name) => {
-    moves = 0
-    const sayHello = () => console.log(`hello ${name}`)
-    return {name, moves, sayHello};
-};
+
+
