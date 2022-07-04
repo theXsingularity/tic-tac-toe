@@ -1,30 +1,32 @@
+//The Game
 const game = function() {
     if(gameInfo.players.length >= 1) return;
     gameInfo.getPlayers();
     gameInfo.gameStart();
-    btnContainer.removeChild(startGameBtn);
+    mainContainer.removeChild(startGameBtn);
+    mainContainer.appendChild(playersTurn);
 }
 
-const btnContainer = document.getElementById('container');
-let startGameBtn = document.createElement('button');
-startGameBtn.innerText = "Start";
-btnContainer.appendChild(startGameBtn);
-
-
-//variables for HTML elements
-playersTurn = document.getElementById('playersTurn')
-playerBtn = document.getElementById('start');
+/* DOM and HTML elements */
+let playersTurn = document.getElementById('playersTurn');
+let startGameBtn = document.getElementById('startGameBtn');
+startGameBtn.innerText = "Start!";
 startGameBtn.addEventListener('click', game)
 
-/* ----------contents of game----------
+/* factory used to create players earlier */
+const playerFactory = (name) => {
+    moves = 0
+    const sayHello = () => console.log(`hello ${name}`)
+    return {name, moves, sayHello};
+};
 
+/* ----------contents of game----------
 -array w/ players
 - whos turn
 -function to create players
 - functino create x or o
 - function to start game
 */
-
 const gameInfo = {
     players: [],
     turn: '',
@@ -48,15 +50,13 @@ const gameInfo = {
         setTimeout(function(){
             gameInfo.gameStart();
         }, 1);
-        
     }, 
     gameStart: function() {
-        
         if(gameInfo.turn === '' || gameInfo.turn === 'player2'){
-            playersTurn.innerHTML = 'player 1\'s turn'
+            playersTurn.innerHTML = `${gameInfo.players[0].name}'s Turn`
             gameInfo.turn = "player1"; 
         } else if(gameInfo.turn === '' || gameInfo.turn === 'player1') {
-            playersTurn.innerHTML = 'player 2\'s turn'
+            playersTurn.innerHTML = `${gameInfo.players[1].name}'s Turn`
            gameInfo.turn = "player2";
         }
     },
@@ -78,41 +78,31 @@ const gameInfo = {
         || [gameBoard.gameboard[3].innerHTML,gameBoard.gameboard[4].innerHTML,gameBoard.gameboard[5].innerHTML].join('') === 'OOO'
         || [gameBoard.gameboard[6].innerHTML,gameBoard.gameboard[7].innerHTML,gameBoard.gameboard[8].innerHTML].join('') === 'OOO'
         ) {
-            alert(`${gameInfo.turn} you win!`)
+            if(gameInfo.turn === "player1") alert(`${gameInfo.players[0].name} you win!`)
+            if(gameInfo.turn === "player2") alert(`${gameInfo.players[1].name} you win!`)
             setTimeout(function(){
                 gameInfo.reset();
             }, 1);
-            
-            
         }
     },
     reset: function() {
         gameBoard.gameboard.forEach(function(square) {
             square.innerHTML = ''
         });
-        turn = ''
+        gameInfo.turn = ''
         gameInfo.players = []
-        playersTurn.innerHTML = ''
-        btnContainer.appendChild(startGameBtn);
-
+        mainContainer.removeChild(playersTurn);
+        mainContainer.appendChild(startGameBtn);
     }
 }
-/* factory used to create players earlier */
-const playerFactory = (name) => {
-    moves = 0
-    const sayHello = () => console.log(`hello ${name}`)
-    return {name, moves, sayHello};
-};
+
+
 /* automatically creates board, allows access to the array of all the divs on the board */
 const gameBoard = (() => {
     const gameboard = [];
     let square = document.createElement('div');
     square.classList.add('square');
-    square.style.height = "50px";
-    square.style.width = "50px";
-    square.style.background = "green";  
-    square.style.border = "2px solid black";  
-    document.getElementById("grid").style.gridTemplateColumns = `repeat(3, 1fr)`; 
+    //square.style.background = "green";  
     for(i=0; i<9; i++) {
         grid.appendChild(square.cloneNode(true)); 
     };
