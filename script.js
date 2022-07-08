@@ -1,35 +1,39 @@
-//The Game
+/* ----- The Game ----- */
 const game = function() {
     if(gameInfo.players.length >= 1) return;
     gameInfo.getPlayers();
-    gameInfo.gameStart();
+    gameInfo.round();
     mainContainer.removeChild(startGameBtn);
     mainContainer.appendChild(playersTurn);
 }
 
-/* DOM and HTML elements */
+/* ---- Global Code ----- */
+//DOM and HTML elements
 let playersTurn = document.getElementById('playersTurn');
 let startGameBtn = document.getElementById('startGameBtn');
 startGameBtn.innerText = "Start!";
 startGameBtn.addEventListener('click', game)
 
-/* factory used to create players earlier */
+/* ----- Factory: creates players below -----*/
 const playerFactory = (name) => {
     moves = 0
     const sayHello = () => console.log(`hello ${name}`)
     return {name, moves, sayHello};
 };
 
-/* ----------contents of game----------
--array w/ players
-- whos turn
--function to create players
-- functino create x or o
-- function to start game
-*/
+/* ----------OBJECT: contents of game----------*/
+//-----array w/ players
+//-----whos turn
+//-----create players function
+//-----create x or o marks function
+//-----round change function
+//-----check win condition function
+//-----reset game function
+
 const gameInfo = {
     players: [],
     turn: '',
+    counter: 0,
     getPlayers: function() {
         const player1 = playerFactory(prompt('player 1'));
         const player2 = playerFactory(prompt("player 2"));
@@ -45,13 +49,15 @@ const gameInfo = {
         if(gameInfo.turn === "player1") event.target.innerHTML = 'X';
         if(gameInfo.turn === "player2") event.target.innerHTML = 'O';
         setTimeout(function(){
-            gameInfo.checkWin();
+            if(gameInfo.checkWin());
         }, 1);
         setTimeout(function(){
-            gameInfo.gameStart();
+            gameInfo.round();
         }, 1);
+        gameInfo.counter += 1
+        console.log(gameInfo.counter)
     }, 
-    gameStart: function() {
+    round: function() {
         if(gameInfo.turn === '' || gameInfo.turn === 'player2'){
             playersTurn.innerHTML = `${gameInfo.players[0].name}'s Turn`
             gameInfo.turn = "player1"; 
@@ -59,6 +65,7 @@ const gameInfo = {
             playersTurn.innerHTML = `${gameInfo.players[1].name}'s Turn`
            gameInfo.turn = "player2";
         }
+        
     },
     checkWin: function() {
         if([gameBoard.gameboard[0].innerHTML,gameBoard.gameboard[1].innerHTML,gameBoard.gameboard[2].innerHTML].join('') === 'XXX'
@@ -80,10 +87,14 @@ const gameInfo = {
         ) {
             if(gameInfo.turn === "player1") alert(`${gameInfo.players[0].name} you win!`)
             if(gameInfo.turn === "player2") alert(`${gameInfo.players[1].name} you win!`)
-            setTimeout(function(){
-                gameInfo.reset();
-            }, 1);
+            gameInfo.reset();
+        }  
+        else if(gameInfo.counter === 9) {
+            alert("it's a tie!")
+            gameInfo.reset();
         }
+
+         
     },
     reset: function() {
         gameBoard.gameboard.forEach(function(square) {
@@ -91,18 +102,19 @@ const gameInfo = {
         });
         gameInfo.turn = ''
         gameInfo.players = []
+        gameInfo.counter = 0
         mainContainer.removeChild(playersTurn);
         mainContainer.appendChild(startGameBtn);
     }
 }
 
-
-/* automatically creates board, allows access to the array of all the divs on the board */
+/* -------Creates board --------*/
+// method which automatically  
+//includes access to  array of all the divs on the board
 const gameBoard = (() => {
     const gameboard = [];
     let square = document.createElement('div');
     square.classList.add('square');
-    //square.style.background = "green";  
     for(i=0; i<9; i++) {
         grid.appendChild(square.cloneNode(true)); 
     };
@@ -113,6 +125,3 @@ const gameBoard = (() => {
     };
     return {gameboard}
 })();
-
-
-
